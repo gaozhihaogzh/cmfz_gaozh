@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.dao.MenuDao">
+	<resultMap type="Menu" id="m1">
+		<id column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="href" property="href"/>
+		<result column="iconcls" property="iconCls"/>
+		<result column="parentid" property="parentId"/>
+	</resultMap>
+	
+	<resultMap type="Menu" id="m2">
+		<id column="m1id" property="id"/>
+		<result column="m1title" property="title"/>
+		<result column="m1href" property="href"/>
+		<result column="m1iconcls" property="iconCls"/>
+		<result column="m1parentid" property="parentId"/>
+		<collection property="menuList" ofType="Menu" >
+			<id column="m2id" property="id"/>
+			<result column="m2title" property="title"/>
+			<result column="m2href" property="href"/>
+			<result column="m2iconcls" property="iconCls"/>
+			<result column="m2parentid" property="parentId"/>
+		</collection>
+	</resultMap>
+	<!-- 查询所有菜单功能 -->
+	<select id="queryAl" resultMap="m2">
+		select m1.id m1id,m1.title m1title,m1.href m1href,m1.iconcls m1iconcls,m1.parentid m1parentid,m2.id m2id,m2.title m2title,m2.href m2href,m2.iconcls m2iconcls ,m2.parentid m2parentid
+		from menu m1 left join menu m2 on m1.id=m2.parentid where m2.parentid is not null
+	</select>
+	<!-- 根据parentid查询对应的菜单选项 -->
+	<select id="queryMenuByParentId" resultMap="m1">
+		select id,title,href,iconcls,parentid from menu where parentid = #{parentId}
+	</select>
+	<!-- 根据Id查询 -->
+	<select id="queryById" resultMap="m1">
+		select id,title,href,iconcls,parentid from menu where id = #{id}
+	</select>
+	<!-- 插入一个菜单功能 -->
+	<insert id="insertItem">
+		insert into menu values(#{id},#{title},#{href},#{iconCls},#{parentId})
+	</insert>
+	<!-- 删除 -->
+	<delete id="deleteItem">
+		delete from menu where id=#{id}
+	</delete>
+	<!-- 修改 -->
+	<update id="updateItem">
+		update menu set title=#{title},href=#{href},iconcls=#{iconCls},parentid=#{menu.id} where id=#{id}
+	</update>
+</mapper>

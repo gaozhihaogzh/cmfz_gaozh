@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.dao.BannerDao">
+	<!-- 查询全部轮播图信息 -->
+	<select id="queryAll" resultType="Banner">
+		select id,title,img_path,description,status,createTime from banner limit #{page},#{rows}
+	</select>
+	<!-- 根据id删除 -->
+	<delete id="deleteItem">
+		delete from banner where id=#{id}
+	</delete>
+	<!-- 修改轮播图信息 -->
+	<update id="updateItem">
+		update banner set title=#{title},description=#{description} where id=#{id}
+	</update>
+	<!-- 根据Id查询 -->
+	<select id="queryById" resultType="Banner">
+		select id,title,img_path,description,status,createTime from banner where id=#{id}
+	</select>
+	<!-- 插入一条数据 -->
+	<insert id="insertItem">
+		insert into banner values(#{id},#{title},#{img_path},#{description},#{status},sysdate())
+	</insert>
+	<!-- 把轮播图设置为轮播状态 -->
+	<update id="updateStatusYes">
+		update banner set status=1 where id=#{id}
+	</update>
+	<!-- 把轮播图设置为未轮播状态 -->
+	<update id="updateStatusNo">
+		update banner set status=0 where id=#{id}
+	</update>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteSome">
+		delete from banner where id in
+		<foreach collection="list" item="l" open="(" close=")" separator=",">
+			#{l}
+		</foreach>
+	</delete>
+	
+	<select id="count" resultType="int">
+		select count(*) from banner
+	</select>
+</mapper>

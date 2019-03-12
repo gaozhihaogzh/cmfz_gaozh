@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.dao.AlbumDao">
+	<!-- 根据Id进行查询 -->
+	<select id="queryById" resultType="Album">
+		select id,title,score,brodcast,
+		author,brief,publicTime,count,coverImg,status
+		from album where id=#{id}
+	</select>
+	<!-- 映射 -->
+	<resultMap type="Album" id="a1">
+		<id column="aid" property="id"/>
+		<result column="atitle" property="title"/>
+		<result column="score" property="score"/>
+		<result column="brodcast" property="brodcast"/>
+		<result column="author" property="author"/>
+		<result column="brief" property="brief"/>
+		<result column="publicTime" property="publicTime"/>
+		<result column="count" property="count"/>
+		<result column="coverImg" property="coverImg"/>
+		<result column="status" property="status"/>
+		<collection property="children" ofType="Chapter">
+			<id column="cid" property="id"/>
+			<result column="ctitle" property="title"/>
+			<result column="url" property="url"/>
+			<result column="size" property="size"/>
+			<result column="duration" property="duration"/>
+			<result column="createTime" property="createTime"/>
+			<association property="album" javaType="Album">
+				<id column="caid" property="id"/>
+			</association>
+		</collection>
+	</resultMap>
+	
+	<!-- 查询全部 -->
+	<select id="queryAll" resultMap="a1">
+				select a.id aid,a.title atitle,a.score,a.brodcast,a.author,a.brief,a.publicTime,a.count,a.coverImg,a.status,
+					c.id cid,c.title ctitle,c.url,c.size,c.duration,c.createTime,c.aid caid
+					from album a left join chapter c 
+					on a.id=c.aid
+					limit #{page},#{rows}
+	</select>
+	
+	<!-- 插入一条数据 -->
+	<insert id="insertItem">
+		insert into album values(#{id},#{title},#{score},#{brodcast},#{author},#{brief},sysdate(),#{count},#{coverImg},#{status})
+	</insert>
+	
+	<!-- 修改专辑中章节的数量 -->
+	<update id="updateItem">
+		update album set count=#{count} where id=#{id}
+	</update>
+	
+	
+	<select id="count" resultType="int">
+		select count(*) from album
+	</select>
+</mapper>

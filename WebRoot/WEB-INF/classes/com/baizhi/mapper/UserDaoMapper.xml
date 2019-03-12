@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.dao.UserDao">
+	<!-- 查询所有用户并分页 -->
+	<select id="queryAl" resultType="java.util.Map">
+		select id,photo,dharmaName,realname,sex,privoince,city,sign,phoneNum,password,DATE_FORMAT(creatTime,'%Y-%m-%d %H:%i:%s') creatTime,status from user limit #{page},#{rows}
+	</select>
+	<!-- 查询用户总数量 -->
+	<select id="count" resultType="int">
+		select count(*) from user
+	</select>
+	
+	<!-- 查询男 -->
+	<select id="findBySex" resultType="int">
+		select count(*) from user where month(creatTime)=#{creatTime} and sex =#{sex}
+	</select>
+	
+	<select id="findD" resultType="String">
+		select privoince from user
+	</select>
+	
+	
+	<!-- 添加一条测试数据 -->
+	<insert id="insertItem">
+		insert into user values(uuid(),#{photo},#{dharmaName},#{realname},#{sex},#{privoince},#{city},#{sign},#{phoneNum},#{password},#{salt},'2018-05-02',#{status})
+	</insert>
+	
+	
+	<select id="findUser" resultType="User">
+		select * from user
+	</select>
+</mapper>

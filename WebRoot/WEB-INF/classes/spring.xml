@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+					       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+					       http://www.springframework.org/schema/context
+					       http://www.springframework.org/schema/context/spring-context-4.0.xsd
+					       http://www.springframework.org/schema/tx
+					       http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+					       http://www.springframework.org/schema/aop
+					       http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+					       
+   <!-- 引入外部的小配置文件  -->
+   <context:property-placeholder location="classpath:jdbc.properties"/>
+   <!-- 开启注解扫描 -->
+   <context:component-scan base-package="com.baizhi"></context:component-scan>
+   <!-- 创建数据源对象 -->
+   <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+   	<property name="driverClassName" value="${MySql.driver}"></property>
+   	<property name="url" value="${MySql.url}"></property>
+   	<property name="username" value="${MySql.username}"></property>
+   	<property name="password" value="${MySql.password}"></property>
+   </bean>
+   <!-- 创建sqlSessionFactory对象 -->
+   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+   		<!-- 引入外部的数据源对象 -->
+   	<property name="dataSource" ref="dataSource"></property>
+   		<!-- 指定mapper文件的位置 -->
+   	<property name="mapperLocations" value="classpath:com/baizhi/mapper/*Mapper.xml"></property>
+   		<!-- 给实体类起别名 -->
+   	<property name="typeAliasesPackage" value="com.baizhi.entity"></property>
+   </bean>
+   <!-- 配置要获取的dao接口的实现类对象 -->
+   <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+   		<!-- 引用SqlSessionFactory -->
+   	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+   		<!-- 指定dao接口所在的位置，dao接口所在的包 ，默认获取dao接口实现类的对象的依据是  接口类名首字母小写-->
+   	<property name="basePackage" value="com.baizhi.dao"></property>
+   </bean>
+   
+   <!-- 创建事务管理对象 -->
+   <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+   		<!-- 引入数据源  -->
+   	<property name="dataSource" ref="dataSource"></property>
+   </bean>
+   <!-- 开启事务注解驱动 -->
+   <tx:annotation-driven transaction-manager="transactionManager"/>
+   
+   <!-- 配置文件上传 -->
+   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+   	<!-- 上传文件的限制 -->
+   	<property name="maxUploadSize" value="2147483647"></property>
+   </bean>
+</beans>

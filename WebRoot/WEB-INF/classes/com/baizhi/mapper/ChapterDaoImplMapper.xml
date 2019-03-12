@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.dao.ChapterDao">
+	<!-- 插入一条数据 -->
+	<insert id="insertItem">
+		insert into chapter values(#{id},#{title},#{url},#{size},#{duration},sysdate(),#{album.id})
+	</insert>
+	
+	<!-- 映射 -->
+	<resultMap type="Chapter" id="c1">
+		<id column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="url" property="url"/>
+		<result column="size" property="size"/>
+		<result column="duration" property="duration"/>
+		<result column="createTime" property="createTime"/>
+		<association property="album" javaType="Album">
+			<id column="aid" property="id"/>
+		</association>
+	</resultMap>
+	<!-- 根据Id进行查询 -->
+	<select id="queryById" resultMap="c1">
+		select id,title,url,size,duration,createTime,aid 
+		from chapter where id=#{id}
+	</select>
+</mapper>
